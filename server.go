@@ -86,12 +86,12 @@ func getRooms(c echo.Context) error {
 		log.Fatal(err)
 	}
 	//スライスをjsonに変換
-	output, err := json.Marshal(rooms)
+	rtn_string, err := json.Marshal(rooms)
 	if err != nil {
 		log.Fatal(err)
 	}
 	//jsonをリターン
-	return c.String(http.StatusOK, string(output))
+	return c.String(http.StatusOK, string(rtn_string))
 }
 
 // IDを指定してユーザー名の取得
@@ -133,8 +133,9 @@ func createUser(c echo.Context) error {
 		log.Fatal(err)
 	}
 	log.Printf("New User %s is created! id=%d", name, lastId)
+	rtn_string := "New User [" + name + "] is created"
 
-	return c.String(http.StatusOK, "")
+	return c.String(http.StatusOK, rtn_string)
 }
 
 // チャットルームの新規登録
@@ -155,8 +156,9 @@ func createRoom(c echo.Context) error {
 		log.Fatal(err)
 	}
 	log.Printf("New Room %s is created! id=%d", name, lastId)
+	rtn_string := "New Room [" + name + "] is created"
 
-	return c.String(http.StatusOK, "")
+	return c.String(http.StatusOK, rtn_string)
 }
 
 // ユーザーをチャットルームに登録
@@ -193,7 +195,7 @@ func registUserRoom(c echo.Context) error {
 		}
 		// 登録したルームのIDを取得
 		err = stmt_post_check.QueryRow(user, room).Scan(&id)
-		rtn_string = "登録完了  id=" + id + "\n"
+		rtn_string = "登録完了: id=" + id + ", user_id=" + user + ", room_id=" + room + "\n"
 	}
 	return c.String(http.StatusOK, rtn_string)
 }
