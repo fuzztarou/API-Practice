@@ -12,6 +12,11 @@ type Room struct {
 	Name string `json:"name"`
 }
 
+// チャットルーム構造体を要素に持つスライス
+type RoomSlice struct {
+	Room []Room `json:"room"`
+}
+
 // ルームのユーザー登録情報の構造体
 type UserRoom struct {
 	UserRoomId string `json:"id"`

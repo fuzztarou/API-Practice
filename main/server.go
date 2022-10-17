@@ -57,18 +57,14 @@ func main() {
 // 全チャットルームの取得
 func getRooms(c echo.Context) error {
 	//チャットルームの構造体
-	type room struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
 	// チャットルーム構造体を要素に持つスライス
 	type roomslice struct {
-		Room []room `json:"room"`
+		Room []structure.Room `json:"room"`
 	}
 	//スライスを生成
 	var rooms roomslice
 	//構造体の初期化
-	r := room{
+	r := structure.Room{
 		Id:   0,
 		Name: "",
 	}
@@ -334,6 +330,7 @@ func postChatToRoom(c echo.Context) error {
 	return c.String(http.StatusOK, string(rtn_string)+"\n")
 }
 
+// テストハンドラ
 func testHandler(c echo.Context) error {
 	type test struct {
 		Id string `json:"id"`
