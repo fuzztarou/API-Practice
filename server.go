@@ -45,7 +45,7 @@ func main() {
 	//ルームにユーザーを登録
 	e.POST("/room/:id/user", registUserToRoom)
 	//ルームにチャットを投稿
-	//e.POST("/room/:id/chat", postChatToRoom)
+	e.POST("/room/:id/chat", postChatToRoom)
 
 	// テスト
 	e.POST("/test", testHandler)
@@ -241,14 +241,7 @@ func registUserToRoom(c echo.Context) error {
 	room_id := c.Param("id")
 	//構造体の初期化
 	ur := new(user_room)
-	/* 	ur := user_room{
-	   		UserRoomId: "",
-	   		UserID:     "",
-	   		UserName:   "",
-	   		RoomID:     room_id,
-	   		RoomName:   "",
-	   	}
-	*/ // リクエストのJSONから値を取得
+	// リクエストのJSONから値を取得
 	err = c.Bind(ur)
 	if err != nil {
 		log.Println("Error occured at Bind")
@@ -314,75 +307,59 @@ func registUserToRoom(c echo.Context) error {
 }
 
 // ルームにチャットを投稿
-/* func postChatToRoom(c echo.Context) error {
+func postChatToRoom(c echo.Context) error {
 	//チャットの構造体
 	type chat struct {
 		ChatId    string `json:"chat_id"`
-		RoomName  string `json:"room_name"`
+		UserId    string `json:"user_id"`
 		UserName  string `json:"user_name"`
-		ChatText  string `json:"chat_text"`
+		RoomId    string `json:"room_id"`
+		RoomName  string `json:"room_name"`
+		ChatTxt   string `json:"chat_txt"`
 		CreatedAt string `json:"created_at"`
 		UpdatedAt string `json:"updated_at"`
 	}
 	//構造体の初期化
-	ch := chat{
-		ChatId:    "",
-		RoomName:  "",
-		UserName:  "",
-		ChatText:  "",
-		CreatedAt: "",
-		UpdatedAt: "",
-	}
-
-	//curl -d 'user_id=2' -d 'text=test'  http://localhost:1323/room/1/chat
+	ch := new(chat)
 	// room_idのパラメータ取得
 	room_id := c.Param("id")
-	// user_idのフォーム値取得
-	user_id := c.FormValue("user_id")
-	chat_text := c.FormValue("text")
+	// JSONから値を取得
+	err := c.Bind(ch)
 	// 変数宣言
-	count := ""
+	user_id := ch.UserId
+	chat_txt := ch.ChatTxt
 	rtn_string := ""
 
 	// チャットルームにチャットを投稿するクエリ
 	stmt_post, err := db.Prepare(
-		"insert into `users_rooms` (user_id, room_id) values (?,?)",
+		"insert into chat (user_id, room_id, chat_txt) values (?,?,?)",
 	)
-	// Insertしたレコードを取得するクエリ
-	stmt_post_check, err := db.Prepare(
-		"select ur.user_room_id, u.user_name, r.room_name from users_rooms as ur " +
-			"join user as u on ur.user_id = u.user_id " +
-			"join room as r on ur.room_id = r.room_id " +
-			"where ur.user_room_id = ?",
+	// 投稿しチャットを取得するクエリ
+	stmt_confirm, err := db.Prepare(
+		"select chat_id, user_name, room_name, chat_txt, created_at from chat as c " +
+			"join user as u on c.user_id = u.user_id " +
+			"join room as r on c.room_id = r.room_id " +
+			"where c.chat_id = ?",
 	)
-
-	// user_idとroom_idが一致するレコードをカウント
-	err = stmt_pre_check.QueryRow(user_id, room_id).Scan(&count)
+	// チャット投稿 クエリの実行
+	res, err := stmt_post.Exec(user_id, room_id, chat_txt)
 	if err != nil {
-		log.Println("Error occured at Query")
+		log.Println("Error occured at Exec")
 		log.Fatal(err)
 	}
-	//登録済であれば新たに登録しない
-	if count != "0" {
-		rtn_string = "登録済です\n"
-	} else {
-		// 登録がなければ新規登録
-		res, err := stmt_regist.Exec(user_id, room_id)
-		if err != nil {
-			log.Println("Error occured at Exec")
-			log.Fatal(err)
-		}
-		//登録したレコードのIDを取得
-		lastId, err := res.LastInsertId()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// 登録したレコードのuser_idとroom_idを取得
-		err = stmt_post_check.QueryRow(lastId).Scan(&ur.UserRoomId, &ur.UserName, &ur.RoomName)
+	// InsertしたレコードのIDを取得
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// チャット取得 クエリの実行
+	err = stmt_confirm.QueryRow(lastId).Scan(&ch.ChatId, &ch.UserName, &ch.RoomName, &ch.ChatTxt, &ch.CreatedAt)
+	if err != nil {
+		log.Println("Error occured at Select")
+		log.Fatal(err)
 	}
 	//構造体をJSONに変換
-	json_string, err := json.Marshal(ur)
+	json_string, err := json.Marshal(ch)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -390,7 +367,7 @@ func registUserToRoom(c echo.Context) error {
 
 	return c.String(http.StatusOK, string(rtn_string)+"\n")
 }
-*/
+
 func testHandler(c echo.Context) error {
 	type test struct {
 		Id string `json:"id"`
