@@ -7,10 +7,10 @@ import (
 	"log"
 	"net/http"
 
-	//"strconv"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
+
+	"api_test/structure"
 )
 
 // 変数
@@ -102,13 +102,8 @@ func getRooms(c echo.Context) error {
 
 // IDを指定してユーザー名の取得
 func getUser(c echo.Context) error {
-	//ユーザー構造体
-	type user struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
 	//構造体初期化
-	u := user{
+	u := structure.User{
 		Id:   0,
 		Name: "",
 	}
@@ -135,13 +130,8 @@ func getUser(c echo.Context) error {
 
 // ユーザーの新規登録
 func createUser(c echo.Context) error {
-	//ユーザー構造体
-	type user struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
 	//構造体初期化
-	u := new(user)
+	u := new(structure.User)
 	// リクエストのJSONから値を取得
 	err = c.Bind(u)
 	if err != nil {
@@ -182,13 +172,8 @@ func createUser(c echo.Context) error {
 
 // チャットルームの新規登録
 func createRoom(c echo.Context) error {
-	//チャットルームの構造体
-	type room struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
 	//構造体の初期化
-	r := new(room)
+	r := new(structure.Room)
 	// リクエストのJSONから値を取得
 	err = c.Bind(r)
 	if err != nil {
@@ -229,18 +214,10 @@ func createRoom(c echo.Context) error {
 
 // ユーザーをチャットルームに登録
 func registUserToRoom(c echo.Context) error {
-	//ルームのユーザー登録情報の構造体
-	type user_room struct {
-		UserRoomId string `json:"id"`
-		UserID     string `json:"user_id"`
-		UserName   string `json:"user_name"`
-		RoomID     string `json:"room_id"`
-		RoomName   string `json:"room_name"`
-	}
 	// room_idをパラメータから取得
 	room_id := c.Param("id")
 	//構造体の初期化
-	ur := new(user_room)
+	ur := new(structure.UserRoom)
 	// リクエストのJSONから値を取得
 	err = c.Bind(ur)
 	if err != nil {
@@ -308,19 +285,8 @@ func registUserToRoom(c echo.Context) error {
 
 // ルームにチャットを投稿
 func postChatToRoom(c echo.Context) error {
-	//チャットの構造体
-	type chat struct {
-		ChatId    string `json:"chat_id"`
-		UserId    string `json:"user_id"`
-		UserName  string `json:"user_name"`
-		RoomId    string `json:"room_id"`
-		RoomName  string `json:"room_name"`
-		ChatTxt   string `json:"chat_txt"`
-		CreatedAt string `json:"created_at"`
-		UpdatedAt string `json:"updated_at"`
-	}
 	//構造体の初期化
-	ch := new(chat)
+	ch := new(structure.Chat)
 	// room_idのパラメータ取得
 	room_id := c.Param("id")
 	// JSONから値を取得
