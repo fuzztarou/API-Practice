@@ -73,7 +73,7 @@ func getRooms(c echo.Context) error {
 		Name: "",
 	}
 	//クエリ
-	stmt, err := db.Prepare("select room_id, room_name from room")
+	stmt, err := db.Prepare("SELECT room_id, room_name FROM room")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -115,7 +115,7 @@ func getUser(c echo.Context) error {
 	// パラメータ取得
 	id := c.Param("id")
 	// クエリ
-	stmt, err := db.Prepare("select user_id, user_name from user where user_id = ?")
+	stmt, err := db.Prepare("SELECT user_id, user_name FROM user WHERE user_id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -149,7 +149,7 @@ func createUser(c echo.Context) error {
 		log.Fatal(err)
 	}
 	// 新規登録クエリ
-	stmt_create, err := db.Prepare("insert into user(user_name) values(?)")
+	stmt_create, err := db.Prepare("INSERT INTO user(user_name) VALUES(?)")
 	// クエリの実行
 	res, err := stmt_create.Exec(u.Name)
 	if err != nil {
@@ -162,7 +162,7 @@ func createUser(c echo.Context) error {
 		log.Fatal(err)
 	}
 	// 登録確認クエリ
-	stmt_confirm, err := db.Prepare("select user_id, user_name from user where user_id = ?")
+	stmt_confirm, err := db.Prepare("SELECT user_id, user_name FROM user WHERE user_id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -196,7 +196,7 @@ func createRoom(c echo.Context) error {
 		log.Fatal(err)
 	}
 	// クエリ
-	stmt, err := db.Prepare("insert into room(room_name) values(?)")
+	stmt, err := db.Prepare("INSERT INTO room(room_name) VALUES(?)")
 	// クエリの実行
 	res, err := stmt.Exec(r.Name)
 	if err != nil {
@@ -209,7 +209,7 @@ func createRoom(c echo.Context) error {
 		log.Fatal(err)
 	}
 	// 登録確認クエリ
-	stmt_confirm, err := db.Prepare("select room_id, room_name from room where room_id = ?")
+	stmt_confirm, err := db.Prepare("SELECT room_id, room_name FROM room WHERE room_id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -257,18 +257,18 @@ func registUserToRoom(c echo.Context) error {
 
 	// 登録があるかどうかをチェックするクエリ
 	stmt_pre_check, err := db.Prepare(
-		"select count(*) from users_rooms where user_id = ? and room_id = ?",
+		"SELECT count(*) FROM users_rooms WHERE user_id = ? AND room_id = ?",
 	)
 	// チャットルームにユーザーを登録するクエリ
 	stmt_regist, err := db.Prepare(
-		"insert into `users_rooms` (user_id, room_id) values (?,?)",
+		"INSERT INTO `users_rooms` (user_id, room_id) VALUES (?,?)",
 	)
 	// Insertしたレコードを取得するクエリ
 	stmt_post_check, err := db.Prepare(
-		"select ur.user_room_id, u.user_name, r.room_name from users_rooms as ur " +
-			"join user as u on ur.user_id = u.user_id " +
-			"join room as r on ur.room_id = r.room_id " +
-			"where ur.user_room_id = ?",
+		"SELECT ur.user_room_id, u.user_name, r.room_name FROM users_rooms AS ur " +
+			"JOIN user AS u ON ur.user_id = u.user_id " +
+			"JOIN room AS r ON ur.room_id = r.room_id " +
+			"WHERE ur.user_room_id = ?",
 	)
 
 	// user_idとroom_idが一致するレコードをカウント
@@ -332,14 +332,14 @@ func postChatToRoom(c echo.Context) error {
 
 	// チャットルームにチャットを投稿するクエリ
 	stmt_post, err := db.Prepare(
-		"insert into chat (user_id, room_id, chat_txt) values (?,?,?)",
+		"INSERT INTO chat (user_id, room_id, chat_txt) VALUES (?,?,?)",
 	)
 	// 投稿しチャットを取得するクエリ
 	stmt_confirm, err := db.Prepare(
-		"select chat_id, user_name, room_name, chat_txt, created_at from chat as c " +
-			"join user as u on c.user_id = u.user_id " +
-			"join room as r on c.room_id = r.room_id " +
-			"where c.chat_id = ?",
+		"SELECT chat_id, user_name, room_name, chat_txt, created_at FROM chat AS c " +
+			"JOIN user AS u ON c.user_id = u.user_id " +
+			"JOIN room AS r ON c.room_id = r.room_id " +
+			"WHERE c.chat_id = ?",
 	)
 	// チャット投稿 クエリの実行
 	res, err := stmt_post.Exec(user_id, room_id, chat_txt)
@@ -355,7 +355,7 @@ func postChatToRoom(c echo.Context) error {
 	// チャット取得 クエリの実行
 	err = stmt_confirm.QueryRow(lastId).Scan(&ch.ChatId, &ch.UserName, &ch.RoomName, &ch.ChatTxt, &ch.CreatedAt)
 	if err != nil {
-		log.Println("Error occured at Select")
+		log.Println("Error occured at SELECT")
 		log.Fatal(err)
 	}
 	//構造体をJSONに変換
