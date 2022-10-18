@@ -37,3 +37,9 @@ type Chat struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
+
+// エラー構造体
+type Error struct {
+	Message   string `json:"message"`
+	ErrorCode string `json:"error_code"`
+}
