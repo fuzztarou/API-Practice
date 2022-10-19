@@ -1,5 +1,7 @@
 package structure
 
+// echoのBinding  https://echo.labstack.com/guide/binding/
+
 // ユーザー構造体
 type User struct {
 	Id   int    `json:"id"`
