@@ -26,7 +26,7 @@ func CreateRoom(c echo.Context) error {
 	// リクエストJSONのnameが空だった時
 	if roomStruct.Name == "" {
 		errStruct.Message = "Room name should not be empty"
-		errStruct.ErrorCode = "100"
+		errStruct.ErrorCode = "101"
 		return c.JSON(http.StatusBadRequest, errStruct)
 	}
 
@@ -37,7 +37,7 @@ func CreateRoom(c echo.Context) error {
 	res, err := stmt_insert.Exec(roomStruct.Name)
 	if err != nil {
 		errStruct.Message = "Query Failed at INSERT"
-		errStruct.ErrorCode = "100"
+		errStruct.ErrorCode = "102"
 		return c.JSON(http.StatusInternalServerError, errStruct)
 	}
 
@@ -45,7 +45,7 @@ func CreateRoom(c echo.Context) error {
 	lastId, err := res.LastInsertId()
 	if err != nil {
 		errStruct.Message = "Failed to get last inserted ID"
-		errStruct.ErrorCode = "100"
+		errStruct.ErrorCode = "103"
 		return c.JSON(http.StatusInternalServerError, errStruct)
 	}
 
@@ -56,7 +56,7 @@ func CreateRoom(c echo.Context) error {
 	err = stmt_confirm.QueryRow(lastId).Scan(&roomStruct.Id, &roomStruct.Name)
 	if err != nil {
 		errStruct.Message = "Failed to get last inserted record"
-		errStruct.ErrorCode = "100"
+		errStruct.ErrorCode = "104"
 		return c.JSON(http.StatusInternalServerError, errStruct)
 	}
 
