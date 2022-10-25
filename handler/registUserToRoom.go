@@ -56,11 +56,11 @@ func RegistUserToRoom(c echo.Context) error {
 
 	// Insertしたレコードを取得するクエリ
 	stmt_post_check, err := db.Db.Prepare(
-		"SELECT userRoomStruct.user_room_id, u.user_name, r.room_name " +
-			"FROM users_rooms AS userRoomStruct " +
-			"JOIN user AS u ON userRoomStruct.user_id = u.user_id " +
-			"JOIN room AS r ON userRoomStruct.room_id = r.room_id " +
-			"WHERE userRoomStruct.user_room_id = ?",
+		"SELECT ur.user_room_id, u.user_name, r.room_name " +
+			"FROM users_rooms AS ur " +
+			"JOIN user AS u ON ur.user_id = u.user_id " +
+			"JOIN room AS r ON ur.room_id = r.room_id " +
+			"WHERE ur.user_room_id = ?",
 	)
 	if err != nil {
 		return c.JSON(

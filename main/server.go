@@ -30,11 +30,19 @@ func main() {
 	//Echoオブジェクト？の生成
 	e := echo.New()
 
-	////ルーティング////
+	//
+	//GET
+	//
 	//ルーム一覧を取得
 	e.GET("/room", handler.GetRooms)
 	//ユーザー取得
 	e.GET("/user/:id", handler.GetUser)
+	//ルームにチャットを投稿
+	e.GET("/room/:id/chat", handler.GetChat)
+
+	//
+	//POST
+	//
 	//ユーザー作成
 	e.POST("/user", handler.CreateUser)
 	//ルーム作成

@@ -40,6 +40,11 @@ type Chat struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+// チャットルーム構造体を要素に持つスライス
+type ChatSlice struct {
+	Chat []Chat `json:"chat"`
+}
+
 // エラー構造体
 type Error struct {
 	Message   string `json:"message"`

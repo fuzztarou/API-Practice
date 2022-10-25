@@ -14,9 +14,6 @@ func PostChatToRoom(c echo.Context) error {
 	//構造体の初期化
 	chatStruct := new(model.Chat)
 
-	// room_idのパラメータ取得
-	room_id := c.Param("id")
-
 	// JSONから値を取得
 	err := c.Bind(chatStruct)
 	if err != nil {
@@ -29,6 +26,9 @@ func PostChatToRoom(c echo.Context) error {
 	// 変数宣言
 	user_id := chatStruct.UserId
 	chat_txt := chatStruct.ChatTxt
+
+	// room_idのパラメータ取得
+	room_id := c.Param("id")
 
 	// チャットルームにチャットを投稿するクエリ
 	stmt_post, err := db.Db.Prepare(
