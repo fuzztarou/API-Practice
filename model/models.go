@@ -45,7 +45,7 @@ type ChatSlice struct {
 	Chat []Chat `json:"chat"`
 }
 
-////////// 以下、エラー関係 //////////
+// //////// 以下、エラー関係 //////////
 
 // エラー構造体
 type Error struct {
